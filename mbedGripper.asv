@@ -25,14 +25,29 @@ classdef mbedGripper < matlab.mixin.SetGet
     methods
         function Angle = get.Angle(obj)
             flushinput(obj.mbedSerial);
-            fprintf(obj.mbedSerial, 'angl', 'async');
-            Angle = fscanf(obj.mbedSerial);
+            flushoutput(obj.mbedSerial);
+            fprintf(obj.mbedSerial, '1,0,0\n', 'async');
+            Angle = str2double(fscanf(obj.mbedSerial));
         end
         
         function set.Angle(obj, value)
             flushoutput(obj.mbedSerial);
-            fprintf(obj.mbedSerial, '%f', value);s
+            flushinput(obj.mbedSerial);
+            fprintf(obj.mbedSerial, '0,0,%f', value, 'async');
         end
+        
+        function kP = get.kP(obj)
+            flushoutput(obj.mbedSerial);
+            flushInput(obj.mbedSerial);
+            fprintf(obj.mbedSerial, '1,1,0\n', 'async');
+        end
+        
+        function set.kP(obj)
+            flushoutput(obj.mebedSerial);
+            flushinput(obj.mbedSerial);
+            fprintf(obj.mbedSerial, '0,1,%f\n', 'a
+        end
+        
     end
     
 end
