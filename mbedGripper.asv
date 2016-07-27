@@ -1,6 +1,21 @@
 classdef mbedGripper < matlab.mixin.SetGet
-    %MBEDGRIPPER Summary of this class goes here
-    %   Detailed explanation goes here
+    %MBEDGRIPPER MATLAB class to interact with an mBed Gripper
+    %
+    % obj = mbedGripper(ComPort) creates an mbedGripper object that
+    % establishes communcations on the given Com Port
+    % 
+    % mbedGripper Methods
+    %   get     - queries properties from the mbed
+    %   set     - sends commands to the mbed to send properties
+    % mbedGripper Properties
+    %   Angle           - the angle of the gripper in degrees considering 0
+    %                     is closed and ~60 is open
+    %   mbedSerial      - A Serial object for communication with the mbed
+    %   kP              - the Proportional PID Tuning parameter
+    %   kI              - the Integral PID Tuning parameter
+    %   kD              - the Derivative PID Tuning parameter
+    %   error           - how close the PID controller is to the setpoint
+    %   
     
     properties(SetAccess = 'public', GetAccess = 'public')
         Angle
@@ -8,6 +23,9 @@ classdef mbedGripper < matlab.mixin.SetGet
         kP
         kI
         kD
+        error
+        Current
+        input
     end
     
     methods(Access = 'public')
@@ -20,6 +38,10 @@ classdef mbedGripper < matlab.mixin.SetGet
             set(obj.mbedSerial, 'Terminator', 'LF');
             fopen(obj.mbedSerial);
         end
+        
+        function delete(obj)
+            delete(instrfindall);
+        end
     end
     
     methods
@@ -27,27 +49,76 @@ classdef mbedGripper < matlab.mixin.SetGet
             flushinput(obj.mbedSerial);
             flushoutput(obj.mbedSerial);
             fprintf(obj.mbedSerial, '1,0,0\n', 'async');
-            Angle = str2double(fscanf(obj.mbedSerial));
+            Angle = fscanf(obj.mbedSerial, '%f');
+            %Angle = obj.Angle;
         end
         
         function set.Angle(obj, value)
             flushoutput(obj.mbedSerial);
             flushinput(obj.mbedSerial);
-            fprintf(obj.mbedSerial, '0,0,%f', value, 'async');
+            fprintf(obj.mbedSerial, '0,0,%f\n', value, 'async');
         end
         
         function kP = get.kP(obj)
             flushoutput(obj.mbedSerial);
-            flushInput(obj.mbedSerial);
-            fprintf(obj.mbedSerial, '1,1,0\n', 'async');
-        end
-        
-        function set.kP(obj)
-            flushoutput(obj.mebedSerial);
             flushinput(obj.mbedSerial);
-            fprintf(obj.mbedSerial, '0,1,%f\n', 'a
+            fprintf(obj.mbedSerial, '1,1,0', 'async');
+            kP = fscanf(obj.mbedSerial, '%f');
         end
         
+        function set.kP(obj, value)
+            flushoutput(obj.mbedSerial);
+            flushinput(obj.mbedSerial);
+            %obj.kP = value;
+            fprintf(obj.mbedSerial, '0,1,%f\n', value, 'async');
+        end
+        
+        function kI = get.kI(obj)
+            flushoutput(obj.mbedSerial);
+            flushinput(obj.mbedSerial);
+            fprintf(obj.mbedSerial, '1,2,0\n', 'async');
+            kI = fscanf(obj.mbedSerial, '%f');
+        end
+        
+        function set.kI(obj, value)
+            flushoutput(obj.mbedSerial);
+            flushinput(obj.mbedSerial);
+            fprintf(obj.mbedSerial, '0,2,%f\n', value, 'async');
+        end
+        
+        function kD = get.kD(obj)
+            flushoutput(obj.mbedSerial);
+            flushinput(obj.mbedSerial);
+            fprintf(obj.mbedSerial, '1,3,0\n', 'async');
+            kD = fscanf(obj.mbedSerial, '%f');
+        end
+        
+        function set.kD(obj, value)
+            flushoutput(obj.mbedSerial);
+            flushinput(obj.mbedSerial);
+            fprintf(obj.mbedSerial, '0,3,%f\n', value, 'async');
+        end
+        
+        function error = get.error(obj)
+            flushoutput(obj.mbedSerial);
+            flushinput(obj.mbedSerial);
+            fprintf(obj.mbedSerial, '1,4,0\n', 'async');
+            error = fscanf(obj.mbedSerial, '%f');
+        end
+        
+        function Current = get.Current(obj)
+            flushoutput(obj.mbedSerial);
+            flushinput(obj.mbedSerial);
+            fprintf(obj.mbedSerial, '1,5,0\n', 'async');
+            Current = fscanf(obj.mbedSerial, '%f');
+        end
+        
+        function input = get.input(obj)
+            flushoutput(obj.mbedSerial);
+            flushinput(obj.mbedSerial);
+            fprintf(obj.mbedSerial, '1,6,0\n', 'async');
+            input = fscanf(obj.mbedSerial, '%f');
+        end
     end
     
 end

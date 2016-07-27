@@ -1,0 +1,17 @@
+clear all; close all; clc
+
+delete(instrfindall);
+grip = mbedGripper('COM6');
+
+grip.set('kP', 1);
+grip.set('kI', 0);
+grip.set('kD', 0);
+grip.set('Angle', 50);
+pause(.01);
+
+for i = 1:100
+    out(i) = grip.get('error');
+    pause(.01);
+end
+
+plot(timeseries(out, 1:100));
