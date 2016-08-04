@@ -15,8 +15,17 @@ classdef mbedGripper < matlab.mixin.SetGet
     %   kI              - the Integral PID Tuning parameter
     %   kD              - the Derivative PID Tuning parameter
     %   error           - how close the PID controller is to the setpoint
-    %   
+    %   Current         - The approximate amount of current going through
+    %                     the motors
+    %   input           - The PWM signal that is going into the H-Bridge
+    %Example:
+    %   grip = mbedGripper('COM6');
+    %   grip.set('Angle', 50)
+    % M. Rancic, M. Kutzer, 2016
     
+    %----------------------------------------------------------------------
+    %% General Properties
+    %----------------------------------------------------------------------
     properties(SetAccess = 'public', GetAccess = 'public')
         Angle
         mbedSerial
@@ -28,6 +37,9 @@ classdef mbedGripper < matlab.mixin.SetGet
         input
     end
     
+    %----------------------------------------------------------------------
+    %% get and set methods
+    %----------------------------------------------------------------------
     methods(Access = 'public')
         function obj = mbedGripper(ComPort)
             obj.mbedSerial = serial(ComPort);
@@ -120,6 +132,10 @@ classdef mbedGripper < matlab.mixin.SetGet
             input = fscanf(obj.mbedSerial, '%f');
         end
     end
+    
+    %% Other Functions
+    met
+    function Calibrate(obj)
     
 end
 

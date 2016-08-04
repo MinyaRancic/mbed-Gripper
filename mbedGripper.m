@@ -49,6 +49,7 @@ classdef mbedGripper < matlab.mixin.SetGet
             set(obj.mbedSerial, 'StopBits', 1);
             set(obj.mbedSerial, 'Terminator', 'LF');
             fopen(obj.mbedSerial);
+            Calibrate(obj);
         end
         
         function delete(obj)
@@ -133,5 +134,13 @@ classdef mbedGripper < matlab.mixin.SetGet
         end
     end
     
+    %% Other Functions
+    methods
+        function Calibrate(obj)
+            flushoutput(obj.mbedSerial);
+            flushinput(obj.mbedSerial);
+            fprintf(obj.mbedSerial, '0,4,0\n', 'async');
+        end
+    end
 end
 
